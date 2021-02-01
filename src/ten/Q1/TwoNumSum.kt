@@ -1,4 +1,4 @@
-package ten.first
+package ten.Q1
 
 import java.util.*
 import kotlin.collections.HashMap
