@@ -1,5 +1,7 @@
 package ten.Q5
 
+import kotlin.test.assertEquals
+
 //给你一个字符串 s，找到 s 中最长的回文子串。
 //
 //
@@ -44,14 +46,16 @@ package ten.Q5
 // Related Topics 字符串 动态规划
 // 👍 3143 👎 0
 fun main(args: Array<String>) {
-    println(Solution().longestPalindrome("babad"))
-    println(Solution().longestPalindrome("cbbd"))
-    println(Solution().longestPalindrome("a"))
-    println(Solution().longestPalindrome("ac"))
-    println(Solution().longestPalindrome("abcdeeeedcba"))
-    println(Solution().longestPalindrome("2abcdeeeedcdba4"))
-    println(Solution().longestPalindrome("abcdeeedcba"))
-    println(Solution().longestPalindrome("dabcdeeedcbas"))
+    assertEquals(Solution().longestPalindrome("babad"),"bab")
+    assertEquals(Solution().longestPalindrome("cbbd"),"bb")
+    assertEquals(Solution().longestPalindrome("a"),"a")
+    assertEquals(Solution().longestPalindrome("ac"),"a")
+    assertEquals(Solution().longestPalindrome("abcdeeeedcba"),"abcdeeeedcba")
+    assertEquals(Solution().longestPalindrome("2abcdeeeedcdba4"),"cdeeeedc")
+    assertEquals(Solution().longestPalindrome("abcdeeedcba"),"abcdeeedcba")
+    assertEquals(Solution().longestPalindrome("dabcdeeedcbas"),"abcdeeedcba")
+    println("success")
+
 }
 
 //leetcode submit region begin(Prohibit modification and deletion)

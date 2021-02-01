@@ -1,5 +1,8 @@
 package ten.Q4
 
+import kotlin.test.assertEquals
+import kotlin.test.asserter
+
 //给定两个大小为 m 和 n 的正序（从小到大）数组 nums1 和 nums2。请你找出并返回这两个正序数组的中位数。
 //
 // 进阶：你能设计一个时间复杂度为 O(log (m+n)) 的算法解决此问题吗？
@@ -54,11 +57,12 @@ package ten.Q4
 // 👍 3625 👎 0
 fun main(args: Array<String>) {
 //    print(Solution().indexCutPointPosition(simple1, 0, simple1.size - 1, 9))
-    println(Solution().findMedianSortedArrays(intArrayOf(1, 3), intArrayOf(2)))
-    println(Solution().findMedianSortedArrays(intArrayOf(1, 3), intArrayOf(2, 4)))
-    println(Solution().findMedianSortedArrays(intArrayOf(0, 0), intArrayOf(0, 0)))
-    println(Solution().findMedianSortedArrays(intArrayOf(), intArrayOf(1)))
-    println(Solution().findMedianSortedArrays(intArrayOf(2), intArrayOf()))
+    assertEquals(Solution().findMedianSortedArrays(intArrayOf(1, 3), intArrayOf(2)), 2.0)
+    assertEquals(Solution().findMedianSortedArrays(intArrayOf(1, 3), intArrayOf(2, 4)), 2.5)
+    assertEquals(Solution().findMedianSortedArrays(intArrayOf(0, 0), intArrayOf(0, 0)), 0.0)
+    assertEquals(Solution().findMedianSortedArrays(intArrayOf(), intArrayOf(1)), 1.0)
+    assertEquals(Solution().findMedianSortedArrays(intArrayOf(2), intArrayOf()), 2.0)
+    println("success")
 }
 
 //leetcode submit region begin(Prohibit modification and deletion)

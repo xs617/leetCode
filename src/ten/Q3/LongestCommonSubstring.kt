@@ -1,5 +1,7 @@
 package ten.Q3
 
+import kotlin.test.assertEquals
+
 //给定一个字符串，请你找出其中不含有重复字符的 最长子串 的长度。
 //
 //
@@ -46,7 +48,10 @@ package ten.Q3
 //
 // Related Topics 哈希表 双指针 字符串 Sliding Window
 // 👍 4861 👎 0
-
+fun main(args: Array<String>) {
+    assertEquals(Solution().lengthOfLongestSubstring("abcabcbb"), 3)
+    println("success")
+}
 
 //leetcode submit region begin(Prohibit modification and deletion)
 class Solution {

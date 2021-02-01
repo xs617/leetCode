@@ -2,6 +2,7 @@ package ten.Q1
 
 import java.util.*
 import kotlin.collections.HashMap
+import kotlin.test.assertEquals
 
 //给定一个整数数组 nums 和一个整数目标值 target，请你在该数组中找出 和为目标值 的那 两个 整数，并返回它们的数组下标。
 //
@@ -47,7 +48,8 @@ import kotlin.collections.HashMap
 // 👍 10129 👎 0
 
 fun main(args: Array<String>) {
-    println(Arrays.toString(Solution().twoSum(intArrayOf(2, 7, 11, 15), 9)))
+    assert(Solution().twoSum(intArrayOf(2, 7, 11, 15), 9).contentEquals(intArrayOf(0,1)))
+    println("success")
 }
 
 //leetcode submit region begin(Prohibit modification and deletion)
