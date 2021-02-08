@@ -1,5 +1,9 @@
 package ten.Q9
 
+import kotlin.test.assertEquals
+import kotlin.test.assertFails
+import kotlin.test.assertTrue
+
 //给你一个整数 x ，如果 x 是一个回文整数，返回 ture ；否则，返回 false 。
 //
 // 回文数是指正序（从左向右）和倒序（从右向左）读都是一样的整数。例如，121 是回文，而 123 不是。
@@ -52,11 +56,11 @@ package ten.Q9
 
 fun main(args: Array<String>) {
     var timeStart = System.nanoTime()
-    assert(!Solution().isPalindrome(42))
-    assert(Solution().isPalindrome(121))
-    assert(!Solution().isPalindrome(-121))
-    assert(!Solution().isPalindrome(10))
-    assert(!Solution().isPalindrome(-101))
+    assertEquals(false, Solution().isPalindrome(42))
+    assertEquals(true, Solution().isPalindrome(121))
+    assertEquals(false, Solution().isPalindrome(-121))
+    assertEquals(false, Solution().isPalindrome(10))
+    assertEquals(false, Solution().isPalindrome(-101))
     println("success --- ${System.nanoTime() - timeStart}---")
     //34405763
 }
