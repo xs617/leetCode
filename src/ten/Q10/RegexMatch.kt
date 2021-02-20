@@ -65,7 +65,8 @@ import kotlin.test.assertEquals
 // 👍 1833 👎 0
 fun main(args: Array<String>) {
     var timeStart = System.nanoTime()
-
+    assertEquals(true, Solution().isMatch("abcaaaaaaabaabcabac", ".*ab.a.*a*a*.*b*b*"))
+    assertEquals(true, Solution().isMatch("a", "aa*.*b*c*d*f*.*"))
     assertEquals(true, Solution().isMatch("abbabaaaaaaacaa", "a*.*b.a.*c*b*a*c*"))
     assertEquals(true, Solution().isMatch("ba", ".*."))
     assertEquals(true, Solution().isMatch("abaaaabaab", "a*.*ba.*c*.."))
@@ -94,7 +95,7 @@ fun main(args: Array<String>) {
 
     assertEquals(true, Solution().isMatch("a", "."))
     assertEquals(false, Solution().isMatch("aa", "."))
-
+    assertEquals(false, Solution().isMatch("aa", "a"))
 
     assertEquals(true, Solution().isMatch("abc", "ab*c"))
     assertEquals(true, Solution().isMatch("abbc", "ab*c"))
@@ -119,119 +120,46 @@ fun main(args: Array<String>) {
     assertEquals(true, Solution().isMatch("ebb", "ebb.*"))
 
     println("success --- ${System.nanoTime() - timeStart}---")
-//    27415355
+//    20887312
 }
 
 //leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
     lateinit var input: String
     lateinit var regex: String
-    val star: Byte = 42
-    val point: Byte = 46
-    val any: Byte = 0
-    val end: Byte = -1
-    val regexInfoList = ArrayList<RegexInfo>()
+    val cacheMap = HashMap<String, Boolean>()
 
     fun isMatch(s: String, p: String): Boolean {
-//        println(" ------------     start : $s : $p     -----------")
+//        println(" ----- start  $s : $p------")
         input = s
         regex = p
-        if (s.isEmpty() && p.isEmpty()) {
-            return true
-        }
-        exploreRegexInfo()
-//        regexInfoList.forEach { println(" +++++++++++++  ${it.matchChar} : ${it.matchMode} : ${it.matchEndChar} ++++++++++") }
-        return parseRegex(inputStartIndex = 0, regStartIndex = 0)
+        return matchRegex(0, 0)
     }
 
-    fun parseRegex(inputStartIndex: Int, regStartIndex: Int): Boolean {
-//        println(" ------------     parseRegex  : $inputStartIndex : $regStartIndex     -----------")
-
-        var regCurIndex = regStartIndex
-        var inputCurIndex = inputStartIndex
-        out@ while (regCurIndex < regexInfoList.size) {
-            val curRegexInfo = regexInfoList[regCurIndex]
-            regCurIndex++
-            when (curRegexInfo.matchMode) {
-                MatchMode.Single -> {
-                    //可匹配任何值或者与待匹配值一致，则匹配下一个，否则匹配失败
-                    if (inputCurIndex < input.length && (curRegexInfo.matchChar == any || curRegexInfo.matchChar == input[inputCurIndex].toByte())) {
-                        inputCurIndex++
-                    } else {
-                        return false
-                    }
-                }
-                MatchMode.MatchUntil -> {
-                    var deepInputIndex = inputCurIndex
-                    while (deepInputIndex < input.length) {
-                        val deepInputChar = input[deepInputIndex].toByte()
-                        //文字匹配
-                        if (curRegexInfo.matchChar == deepInputChar || curRegexInfo.matchChar == any) {
-                            if (curRegexInfo.matchEndChar.contains(any) || curRegexInfo.matchEndChar.contains(deepInputChar)) {
-                                //结束符匹配这个字符本身
-                                //进行尝试
-                                if (parseRegex(deepInputIndex, regCurIndex)) {
-                                    return true
-                                }
-                            }
-                            deepInputIndex++
-                        } else {
-                            inputCurIndex = deepInputIndex
-                            continue@out
-                        }
-                    }
-                    if (regCurIndex >= regexInfoList.size || curRegexInfo.matchEndChar.contains(end)) {
-                        return true
-                    }
-                }
-            }
+    fun matchRegex(inputIndex: Int, regexIndex: Int): Boolean {
+        val currentKey = "${inputIndex}_$regexIndex"
+        val currentMatch = cacheMap.get(currentKey)
+        if (currentMatch != null) {
+//            println(" ++++++++ hint cache ++++++++")
+            return currentMatch
         }
-        return inputCurIndex >= input.length
-    }
-
-    fun exploreRegexInfo() {
-        var regexIndex = 0
-        while (regexIndex < regex.length) {
-            val curRegex = regex[regexIndex].toByte()
-            if (curRegex == star) {
-                regexInfoList.last().matchMode = MatchMode.MatchUntil
-            } else if (curRegex == point) {
-                regexInfoList.add(RegexInfo(MatchMode.Single, any, HashSet()))
-            } else {
-                regexInfoList.add(RegexInfo(MatchMode.Single, curRegex, HashSet()))
-            }
-            regexIndex++
+        if (regexIndex >= regex.length) {
+            return inputIndex >= input.length
         }
-        recallToSetEnd()
-    }
-
-    fun recallToSetEnd() {
-        var index = regexInfoList.size - 2
-        var lastRecallRegexInfo: RegexInfo = regexInfoList.lastOrNull() ?: return
-        lastRecallRegexInfo.matchEndChar.add(end)
-        var recallRegexInfo: RegexInfo? = null
-        while (index >= 0) {
-            recallRegexInfo = regexInfoList[index]
-            when (lastRecallRegexInfo.matchMode) {
-                MatchMode.Single -> {
-                    recallRegexInfo.matchEndChar.add(lastRecallRegexInfo.matchChar)
-                }
-                MatchMode.MatchUntil -> {
-                    recallRegexInfo.matchEndChar.add(lastRecallRegexInfo.matchChar)
-                    recallRegexInfo.matchEndChar.addAll(lastRecallRegexInfo.matchEndChar)
-                }
-            }
-            lastRecallRegexInfo = recallRegexInfo
-            index--
+        if (regexIndex + 1 >= regex.length || regex[regexIndex + 1] != '*') {
+            val result = matchChar(inputIndex, regexIndex) && matchRegex(inputIndex + 1, regexIndex + 1)
+            cacheMap.put(currentKey, result)
+            return result
+        } else {
+            val nextCharMatch = matchChar(inputIndex, regexIndex) && matchRegex(inputIndex + 1, regexIndex)
+            val nextRegexMatch = matchRegex(inputIndex, regexIndex + 2)
+            val result = nextCharMatch || nextRegexMatch
+            cacheMap.put(currentKey, result)
+            return result
         }
     }
 
-    class RegexInfo(var matchMode: MatchMode, var matchChar: Byte, var matchEndChar: HashSet<Byte>) {
-
-    }
-
-    enum class MatchMode {
-        Single,
-        MatchUntil
+    fun matchChar(inputIndex: Int, regexIndex: Int): Boolean {
+        return inputIndex < input.length && regexIndex < regex.length && (input[inputIndex] == regex[regexIndex] || regex[regexIndex] == '.')
     }
 }
