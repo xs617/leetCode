@@ -89,38 +89,39 @@ fun main(args: Array<String>) {
     assertEquals("MMMCDXCIV", Solution().intToRoman(3494))
     assertEquals("MMMCMXCIX", Solution().intToRoman(3999))
     println("success --- ${System.nanoTime() - timeStart}---")
+    ///37714403
 }
 
 //leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
-    val base = listOf<Int>(1000, 100, 10, 1)
     val baseChar = listOf<Char>('M', 'C', 'X', 'I')
     val halfChar = listOf<Char>('D', 'L', 'V')
     fun intToRoman(num: Int): String {
         var baseIndex = 0
         val result = StringBuilder()
         var convertNum = num
-        while (baseIndex < base.size) {
-            var baseNumber = convertNum / base[baseIndex]
-            var baseCount = baseNumber
+        var base = 1000
+        while (base > 0) {
+            var baseNumber = convertNum / base
             if (baseNumber == 9) {
                 result.append(baseChar[baseIndex])
                 result.append(baseChar[baseIndex - 1])
-                baseCount = 0
             } else if (baseNumber == 4) {
                 result.append(baseChar[baseIndex])
                 result.append(halfChar[baseIndex - 1])
-                baseCount = 0
-            } else if (baseNumber >= 5) {
-                result.append(halfChar[baseIndex - 1])
-                baseCount -= 5
+            } else {
+                if (baseNumber >= 5) {
+                    result.append(halfChar[baseIndex - 1])
+                    baseNumber -= 5
+                }
+                while (baseNumber > 0) {
+                    result.append(baseChar[baseIndex])
+                    baseNumber--
+                }
             }
-            while (baseCount > 0) {
-                result.append(baseChar[baseIndex])
-                baseCount--
-            }
-            convertNum %= base[baseIndex]
+            convertNum %= base
             baseIndex++
+            base /= 10
         }
         return result.toString()
     }
